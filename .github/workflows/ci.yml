@@ -12,10 +12,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: biblioteca-universitaria
+
     steps:
       # Paso 1: Clonar el repositorio
       - name: Checkout del código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # Actualizado a la última versión
 
       # Paso 2: Configurar JDK
       - name: Set up JDK 17
@@ -23,35 +27,27 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven
+          cache: maven 
 
-      # Paso 3: Build and Test
+      # 3. Ejecutar los plugins
       - name: Build and Test
-        run: |
-          cd biblioteca-universitaria
-          mvn clean verify
+        run: mvn clean verify
 
-      # Paso 4: Checkstyle
+      # 4. Ejecutar Checkstyle
       - name: Checkstyle Analysis
-        run: |
-          cd biblioteca-universitaria
-          mvn checkstyle:checkstyle
+        run: mvn checkstyle:checkstyle
         continue-on-error: true
 
-      # Paso 5: PMD
+      # 5. Ejecutar PMD
       - name: PMD Analysis
-        run: |
-          cd biblioteca-universitaria
-          mvn pmd:check
+        run: mvn pmd:check
         continue-on-error: true
 
-      # Paso 6: JaCoCo
+      # 6. Generar reporte de cobertura con JaCoCo
       - name: Generate Coverage Report
-        run: |
-          cd biblioteca-universitaria
-          mvn jacoco:report
+        run: mvn jacoco:report
 
-      # Paso 7: Subir artefactos
+      # Paso 7: Subir artefactos generados
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
