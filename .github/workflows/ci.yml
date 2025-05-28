@@ -15,7 +15,7 @@ jobs:
     steps:
       # Paso 1: Clonar el repositorio
       - name: Checkout del código
-        uses: actions/checkout@v4 # Actualizado a la última versión
+        uses: actions/checkout@v4
 
       # Paso 2: Configurar JDK
       - name: Set up JDK 17
@@ -23,32 +23,40 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven 
+          cache: maven
 
-      # 3. Ejecutar los plugins
+      # Paso 3: Build and Test
       - name: Build and Test
-        run: mvn clean verify
+        run: |
+          cd biblioteca-universitaria
+          mvn clean verify
 
-      # 4. Ejecutar Checkstyle
+      # Paso 4: Checkstyle
       - name: Checkstyle Analysis
-        run: mvn checkstyle:checkstyle
+        run: |
+          cd biblioteca-universitaria
+          mvn checkstyle:checkstyle
         continue-on-error: true
 
-      # 5. Ejecutar PMD
+      # Paso 5: PMD
       - name: PMD Analysis
-        run: mvn pmd:check
+        run: |
+          cd biblioteca-universitaria
+          mvn pmd:check
         continue-on-error: true
 
-      # 6. Generar reporte de cobertura con JaCoCo
+      # Paso 6: JaCoCo
       - name: Generate Coverage Report
-        run: mvn jacoco:report
+        run: |
+          cd biblioteca-universitaria
+          mvn jacoco:report
 
-      # Paso 7: Subir artefactos generados
+      # Paso 7: Subir artefactos
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Maven-Reports
           path: |
-            target/site/jacoco/jacoco.xml
-            target/checkstyle-result.xml
-            target/pmd.xml
+            biblioteca-universitaria/target/site/jacoco/jacoco.xml
+            biblioteca-universitaria/target/checkstyle-result.xml
+            biblioteca-universitaria/target/pmd.xml
